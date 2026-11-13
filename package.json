@@ -1,6 +1,6 @@
 {
-  "name": "antigravity-rtl",
-  "displayName": "Antigravity RTL",
+  "name": "antigravity-rtl-toggle",
+  "displayName": "Antigravity RTL Toggle",
   "description": "Live RTL/LTR toggle for the Google Antigravity chat panel in VS Code — supports Persian, Arabic, Hebrew, Urdu, Pashto, Kurdish, Dari, Sindhi, Uyghur, Dhivehi, and Syriac.",
   "version": "0.1.0",
   "publisher": "Zahed-r",
