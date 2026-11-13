@@ -1,0 +1,110 @@
+{
+  "name": "antigravity-rtl",
+  "displayName": "Antigravity RTL",
+  "description": "Live RTL/LTR toggle for the Google Antigravity chat panel in VS Code — supports Persian, Arabic, Hebrew, Urdu, Pashto, Kurdish, Dari, Sindhi, Uyghur, Dhivehi, and Syriac.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "license": "MIT",
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#0F172A",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Formatters",
+    "Other"
+  ],
+  "keywords": [
+    "rtl",
+    "ltr",
+    "persian",
+    "farsi",
+    "arabic",
+    "hebrew",
+    "urdu",
+    "pashto",
+    "kurdish",
+    "bidi",
+    "right-to-left",
+    "antigravity"
+  ],
+  "qna": "marketplace",
+  "homepage": "https://github.com/Zahed316/antigravity-rtl#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zahed316/antigravity-rtl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Zahed316/antigravity-rtl/issues"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "antigravityRtl.toggle",
+        "title": "Toggle RTL / LTR",
+        "category": "Antigravity RTL"
+      },
+      {
+        "command": "antigravityRtl.selectMode",
+        "title": "Select Direction Mode",
+        "category": "Antigravity RTL"
+      },
+      {
+        "command": "antigravityRtl.reapply",
+        "title": "Re-apply Hook to Antigravity",
+        "category": "Antigravity RTL"
+      },
+      {
+        "command": "antigravityRtl.restore",
+        "title": "Restore Original Antigravity Files",
+        "category": "Antigravity RTL"
+      },
+      {
+        "command": "antigravityRtl.showLog",
+        "title": "Show Output Log",
+        "category": "Antigravity RTL"
+      }
+    ],
+    "configuration": {
+      "title": "Antigravity RTL",
+      "properties": {
+        "antigravityRtl.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable RTL/LTR direction override for the Google Antigravity chat panel."
+        },
+        "antigravityRtl.mode": {
+          "type": "string",
+          "default": "force-rtl",
+          "enum": [
+            "force-rtl",
+            "force-ltr",
+            "smart-rtl",
+            "auto"
+          ],
+          "enumDescriptions": [
+            "Force RTL on prose blocks and chat inputs (keeps code blocks LTR).",
+            "Force LTR on prose blocks and chat inputs.",
+            "Apply RTL to blocks containing any RTL script characters anywhere in the block.",
+            "Use browser dir='auto' (determines direction from first strong character)."
+          ],
+          "description": "Direction strategy applied when Antigravity RTL is enabled."
+        },
+        "antigravityRtl.lineHeight": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Optional line-height override for RTL paragraphs (0 keeps the default theme line-height)."
+        }
+      }
+    }
+  }
+}
