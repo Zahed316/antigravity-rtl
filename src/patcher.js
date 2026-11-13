@@ -80,7 +80,29 @@ function cmpVersion(a, b) {
   return 0;
 }
 
-async function discoverAntigravityInstalls(customRoots) {
+async function readVersionFromDir(extDir) {
+  try {
+    const raw = await fsp.readFile(path.join(extDir, 'package.json'), 'utf8');
+    const pkg = JSON.parse(raw);
+    if (pkg && typeof pkg.version === 'string' && pkg.version.trim()) {
+      return pkg.version.trim();
+    }
+  } catch {
+    // Fallback to folder suffix if package.json is absent or unreadable.
+  }
+  const base = path.basename(extDir);
+  return base.startsWith(EXT_PREFIX) ? base.slice(EXT_PREFIX.length) : '0.0.0';
+}
+
+async function discoverAntigravityInstalls(optionsOrRoots) {
+  const isArrayArg = Array.isArray(optionsOrRoots);
+  const customRoots = isArrayArg
+    ? optionsOrRoots
+    : (optionsOrRoots && optionsOrRoots.customRoots);
+  const extraDirs = (!isArrayArg && optionsOrRoots && Array.isArray(optionsOrRoots.extraDirs))
+    ? optionsOrRoots.extraDirs
+    : [];
+
   const home = process.platform === 'win32' && process.env.USERPROFILE
     ? process.env.USERPROFILE
     : os.homedir();
@@ -91,7 +113,14 @@ async function discoverAntigravityInstalls(customRoots) {
     path.join(home, '.vscode-server', 'extensions')
   ];
 
+  const canonicalKey = (p) => {
+    const resolved = path.resolve(p);
+    return process.platform === 'win32' ? resolved.toLowerCase() : resolved;
+  };
+
+  const seenJsPaths = new Set();
   const byRoot = [];
+
   for (const root of roots) {
     let entries;
     try {
@@ -117,8 +146,32 @@ async function discoverAntigravityInstalls(customRoots) {
         };
       }
     }
-    if (best) byRoot.push(best);
+    if (best) {
+      const key = canonicalKey(best.jsPath);
+      if (!seenJsPaths.has(key)) {
+        seenJsPaths.add(key);
+        byRoot.push(best);
+      }
+    }
   }
+
+  for (const rawDir of extraDirs) {
+    if (!rawDir || typeof rawDir !== 'string') continue;
+    const extDir = path.resolve(rawDir);
+    const jsPath = path.join(extDir, 'extension.js');
+    const key = canonicalKey(jsPath);
+    if (seenJsPaths.has(key) || !fs.existsSync(jsPath)) continue;
+    seenJsPaths.add(key);
+    const version = await readVersionFromDir(extDir);
+    byRoot.push({
+      root: path.dirname(extDir),
+      version,
+      dir: extDir,
+      jsPath,
+      bakPath: jsPath + BACKUP_SUFFIX
+    });
+  }
+
   return byRoot;
 }
 

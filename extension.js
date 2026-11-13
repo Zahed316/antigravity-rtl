@@ -61,8 +61,14 @@ async function promptReload(message) {
   }
 }
 
+async function getAllAntigravityInstalls() {
+  const agyExt = vscode.extensions.getExtension('google.google-antigravity');
+  const extraDirs = agyExt && agyExt.extensionPath ? [agyExt.extensionPath] : [];
+  return patcher.discoverAntigravityInstalls({ extraDirs });
+}
+
 async function applyHookIfNeeded({ notifyIfPatched = true, extensionId } = {}) {
-  const installs = await patcher.discoverAntigravityInstalls();
+  const installs = await getAllAntigravityInstalls();
   if (installs.length === 0) {
     log('No google.google-antigravity installation found under extensions folder.');
     return { patchedCount: 0, total: 0 };
@@ -89,7 +95,7 @@ async function applyHookIfNeeded({ notifyIfPatched = true, extensionId } = {}) {
 }
 
 async function restoreHook() {
-  const installs = await patcher.discoverAntigravityInstalls();
+  const installs = await getAllAntigravityInstalls();
   let restoredCount = 0;
   for (const inst of installs) {
     try {

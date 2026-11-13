@@ -76,3 +76,52 @@ test('applyToInstall & restoreInstall preserve real Antigravity extension.js byt
   assert.equal(afterRestore.length, rawOriginal.length);
   assert.ok(afterRestore === rawOriginal, 'restored file should match original byte-for-byte');
 });
+
+test('discoverAntigravityInstalls supports extraDirs (portable/custom extensions-dir) and deduplicates', async (t) => {
+  const tmpRoot = await fsp.mkdtemp(path.join(os.tmpdir(), 'agy-rtl-extradir-'));
+  t.after(async () => {
+    await fsp.rm(tmpRoot, { recursive: true, force: true });
+  });
+
+  const standardRoot = path.join(tmpRoot, 'standard-root');
+  const standardExtDir = path.join(standardRoot, 'google.google-antigravity-1.12.0');
+  await fsp.mkdir(standardExtDir, { recursive: true });
+  await fsp.writeFile(path.join(standardExtDir, 'extension.js'), '// std', 'utf8');
+
+  // Custom portable / dev extension path with version inside package.json
+  const customPkgDir = path.join(tmpRoot, 'portable-data', 'custom-antigravity');
+  await fsp.mkdir(customPkgDir, { recursive: true });
+  await fsp.writeFile(path.join(customPkgDir, 'extension.js'), '// custom', 'utf8');
+  await fsp.writeFile(
+    path.join(customPkgDir, 'package.json'),
+    JSON.stringify({ version: '2.4.1' }),
+    'utf8'
+  );
+
+  // Extra dir without package.json or versioned folder name should fall back to 0.0.0
+  const fallbackDir = path.join(tmpRoot, 'unversioned-ext');
+  await fsp.mkdir(fallbackDir, { recursive: true });
+  await fsp.writeFile(path.join(fallbackDir, 'extension.js'), '// fallback', 'utf8');
+
+  const missingDir = path.join(tmpRoot, 'does-not-exist');
+
+  const installs = await patcher.discoverAntigravityInstalls({
+    customRoots: [standardRoot],
+    extraDirs: [
+      path.join(standardExtDir, '.'), // Duplicate of standardRoot discovery
+      customPkgDir,
+      fallbackDir,
+      missingDir,
+      ''
+    ]
+  });
+
+  assert.equal(installs.length, 3);
+  assert.equal(installs[0].dir, standardExtDir);
+  assert.equal(installs[0].version, '1.12.0');
+  assert.equal(installs[1].dir, customPkgDir);
+  assert.equal(installs[1].version, '2.4.1');
+  assert.equal(installs[2].dir, fallbackDir);
+  assert.equal(installs[2].version, '0.0.0');
+});
+
