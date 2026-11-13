@@ -16,7 +16,7 @@ const JU_PATCHED_REGEX = /return\{effectiveUrl:await __agyRtlWrapUrl\(([\s\S]+?)
 
 const IIFE_ANCHOR = "Object.defineProperty(this, 'navigator', {value: undefined, configurable: true, enumerable: true, writable: true});";
 
-const DEFAULT_EXTENSION_ID = 'local.antigravity-rtl';
+const DEFAULT_EXTENSION_ID = 'Zahed-r.antigravity-rtl';
 
 function buildHookHelper({ controlDir, extensionId } = {}) {
   const extId = extensionId || DEFAULT_EXTENSION_ID;

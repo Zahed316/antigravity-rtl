@@ -2,6 +2,7 @@
 .vscode-test/**
 test/**
 scripts/**
+CONTRIBUTING.md
 *.vsix
 .git/**
 .gitignore

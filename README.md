@@ -54,16 +54,3 @@ Instant **RTL / LTR** direction toggle for the **Google Antigravity** chat panel
 - `antigravityRtl.mode`: `"force-rtl"` | `"force-ltr"` | `"smart-rtl"` | `"auto"` (`"force-rtl"` by default).
 - `antigravityRtl.lineHeight`: Optional line-height override for RTL blocks (`0` preserves default).
 
-## Packaging & Publishing to VS Code Marketplace
-
-1. Set your Marketplace `"publisher"` ID and `"repository"` URL in `package.json`.
-2. Verify tests pass:
-   ```bash
-   node --test test/*.test.js
-   ```
-3. Package or publish using `@vscode/vsce`:
-   ```bash
-   npx @vscode/vsce package
-   npx @vscode/vsce publish
-   ```
-   Or build locally without external dependencies via `python3 scripts/package-vsix.py`.
