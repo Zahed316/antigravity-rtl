@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Added cross-platform discovery for VS Code Portable and custom `--extensions-dir` installations via `vscode.extensions.getExtension('google.google-antigravity')?.extensionPath`.
+- Added case-insensitive path deduplication on Windows and version fallback resolution from `package.json`.
+
 ## 0.1.0
 
 - Initial release of Antigravity RTL for VS Code.
